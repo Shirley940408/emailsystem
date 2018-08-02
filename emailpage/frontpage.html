@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <div class="container  py-3 text-primary">
+     <h1 class="text-center">Email Distribution System</h1>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Email address</label>
+          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Recipient Name</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Recipient Name">
+        </div>
+        <button type="submit" class="btn btn-primary" onclick="addrecipient()">Submit</button>
+        <div class="container-fluid">
+          <div id="addRecipient">
+            </div>
+          <div id="getRecipient" class="row">
+          </div>
+        </div>
+      </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      function send(id){
+      $.get(
+        'http://192.168.33.10/rebuild20/emailSystem/email/send/'+id,
+          function(){
+
+          }
+        )
+      }
+      $(document).ready(function(){
+        var url='../emailSystem/recipient';
+        $.get(url,function(data){
+          console.log(data);
+          var str='';
+          $.each(JSON.parse(data), function(i,item){
+            str+='<div class="col-4">'+'<button class="btn btn-primary" onclick="send('+item.id+')">send</button>'+'</div>'+
+                 '<div class="col-4">'+item.name+'</div>'+
+                 '<div class="col-4">'+item.email+'</div>';     
+          });
+          $('#getRecipient').html(str);
+        });
+      });
+      function addrecipient(){
+        var url='../emailSystem/recipient/add';
+        $.post(
+          url,
+          {
+          'name' :$('#exampleInputPassword1').val(),
+          'email':$('#exampleInputEmail1').val()
+          },
+          function(data){
+          console.log(data);
+          console.log(data.code);
+          if(data.code<300){
+          var str='<div class="alert alert-success" role="alert">Your information has been added successfully!</div>';
+          }
+          else{
+          var str='<div class="alert alert-danger" role="alert">Your format is wrong.</div>';
+          }
+          $('#addRecipient').html(str);
+          });
+      }
+    </script>
+  </body>
+</html>
